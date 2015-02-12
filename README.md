@@ -10,9 +10,10 @@ We have recreated the toolbox in python for further use in a Pymol plugin for vi
 * Summary of set up
 * Configuration
 * Dependencies: Procedure for Linux machines:
-    1. SciPy has the following dependencies which need to be installed globally using sudo apt-get
+    1. SciPy has the following dependencies which need to be installed globally using the command:
         sudo apt-get install gfortran libopenblas-dev liblapack-dev
     2. Requirements.txt contains the list of the libraries/packages required.
+        pip install -r <location of requirements.txt file>
 * Database configuration
 * How to run tests
 * Deployment instructions
