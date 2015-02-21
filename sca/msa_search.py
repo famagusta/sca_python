@@ -1,4 +1,3 @@
-import sca_read
 import swalign
 
 AA = [['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLN', 'GLU', 'GLY', 'HIS', 'ILE', 
@@ -32,11 +31,13 @@ def msa_search(residue_list, chainid, alignments, truncate_or_not = False):
     query = "".join(resname_list)
     scores = []
     for index in range(len(alignments)):
-        scores.append(smith_water_align(query, alignments[index], MATCH, MISMATCH, GAP_PENALTY, GAP_EXTEND_PENALTY)
+        scores.append(smith_water_align(query, alignments[index].tostring(), MATCH, MISMATCH, GAP_PENALTY, GAP_EXTEND_PENALTY))
     max_score = max(scores)
+    print scores
+    return max_score
 
-def smith_water_align(seq1, seq2, match, mismatch, gap_penalty, gap_entension_penalty):
-    scoring = swalign.IdentityScoringMatrix(match, mismatch)
+def smith_water_align(seq1, seq2, match, mismatch, gap_penalty, gap_extension_penalty):
+    scoring = swalign.NucleotideScoringMatrix(match, mismatch)
     sw = swalign.LocalAlignment(scoring, gap_penalty, gap_extension_penalty)
     align = sw.align(seq1, seq2)
     return align.score
