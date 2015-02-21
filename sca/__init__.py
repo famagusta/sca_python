@@ -1,1 +1,1 @@
-__all__ = ['sca_read']
+__all__ = ['sca_read', 'msa_search', 'tutorial_helpers']
