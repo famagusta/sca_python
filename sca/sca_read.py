@@ -1,23 +1,25 @@
 from Bio.PDB.PDBParser import PDBParser
+from Bio import AlignIO
 import numpy as np
+from Bio import Alphabet
 
-LABEL_LENGTH = 8
-SEQ_LENGTH = 129
 
 def read_free(filename):
-    labels = []
+    #TODO: there might be a library function in Biopython
     seqs = []
     for line in open(filename):
-        (label, seq) = line.strip().split()
-        labels.append(list(label.ljust(LABEL_LENGTH)))
-        seqs.append(list(seq.ljust(SEQ_LENGTH)))
-    return (np.array(labels), np.array(seqs))
+        (label, seq_str) = line.strip().split()
+        seqs.append(list(seq_str)) # seq-str.ljust(SEQ_LENGTH)
+    return np.array(seqs, np.character)
 
-def read_pdb(filename):
-    #TODO: this is just a draft
-    parser = PDBParser(filename)
-    strcture = parser.get_structure()
-    return structure
+def read_pdb(filename, chainid):
+    #TODO: think of a better data structure for the output
+    structure = PDBParser().get_structure('PDB_STRUCT', filename)
+    model = structure.child_list[0]
+    chain = model.child_dict[chainid]
+    residue_list = chain.child_list
+    return residue_list
 
 def read_fasta(filename):
-    return [0]
+    msa = AlignIO.read(filename, 'fasta', alphabet = Alphabet.Gapped(Alphabet.IUPAC.protein))
+    return np.array([list(rec) for rec in msa], np.character)
