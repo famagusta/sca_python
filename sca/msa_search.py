@@ -1,17 +1,19 @@
 import swalign
+import numpy as np
 
-AA = [['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLN', 'GLU', 'GLY', 'HIS', 'ILE', 
-    'LEU', 'LYS', 'MET', 'PHE', 'PRO', 'SER', 'THR', 'TRP', 'TYR', 'VAL', 'ASX', 
-    'GLX', 'XAA', 'END', 'GAP'],
-    ['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 
-    'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'Z', 'X', '*', '-']]
+AA = [['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLN', 'GLU', 'GLY', 'HIS', 'ILE',
+      'LEU', 'LYS', 'MET', 'PHE', 'PRO', 'SER', 'THR', 'TRP', 'TYR', 'VAL', 'ASX',
+       'GLX', 'XAA', 'END', 'GAP'],
+      ['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F',
+      'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'Z', 'X', '*', '-']]
 MATCH = 2
 MISMATCH = -1
 GAP_PENALTY = -8
 GAP_EXTEND_PENALTY = -8
 
-def msa_search(residue_list, chainid, alignments, truncate_or_not = False):
-    ''''''
+
+def msa_search(residue_list, alignments, truncate_or_not = False):
+    """"""
     # TODO: POSSIBLE BUG in MSAsearch.m in the first try-catch block in line 72-73
     # indsort contains indices corresponding to atomnum_cat but is used to select entries from atom_fields
     # atom_fields might need to be replaced by atomnum_fields in line 73
@@ -33,14 +35,28 @@ def msa_search(residue_list, chainid, alignments, truncate_or_not = False):
     for index in range(len(alignments)):
         scores.append(smith_water_align(query, alignments[index].tostring(), MATCH, MISMATCH, GAP_PENALTY, GAP_EXTEND_PENALTY))
     max_score = max(scores)
-    print scores
-    return max_score
+    max_score_index = scores.index(max_score)
+
+    if truncate_or_not:
+        is_letter = np.core.defchararray.isalpha(alignments[max_score_index])
+        alignment_trunc = alignments[:, is_letter]
+        print '     truncated alignment using sequence #' + str(max_score_index) + \
+            '  (score: ' + str(max_score) + ')'
+    else:
+        print 'tophit is sequence #' + str(max_score_index) + '  (score: ' + str(max_score) + ')'
+
+    if 'alignment_trunc' in locals():
+        return max_score_index, alignment_trunc
+    else:
+        return max_score_index
+
 
 def smith_water_align(seq1, seq2, match, mismatch, gap_penalty, gap_extension_penalty):
     scoring = swalign.NucleotideScoringMatrix(match, mismatch)
     sw = swalign.LocalAlignment(scoring, gap_penalty, gap_extension_penalty)
     align = sw.align(seq1, seq2)
     return align.score
+
 
 def unique(my_list):
     '''

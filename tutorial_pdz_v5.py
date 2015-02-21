@@ -28,7 +28,7 @@ def tutorial():
     # gap frequency no greater than 20% - to avoid over-representation of gaps
     alignments = helpers.truncate(alignments, FRAC_ALPHA_CUTOFF)
 
-    return msa_search.msa_search(pdb, CHAINID, alignments)
+    return msa_search.msa_search(pdb, alignments)
 
 
 OUTPUT = tutorial()
