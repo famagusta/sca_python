@@ -3,31 +3,32 @@
 import numpy as np
 
 
-def binrep(algn):
+def binrep(alignment):
     '''Main function that creates the 3D binary tensor'''
-    shape_algn = algn[1].shape
-    N_aa = 20
-    alg = lett2num(algn)
-    shape = [shape_algn[0], shape_algn[1], N_aa]
-    X3d = np.zeros(shape)
-    for a in range(0, N_aa):
-        X3d[:, :, a] = (alg == a)
-    return X3d
+    shape_algn = alignment[1].shape
+    no_aa = 20
+    num_alignment = lett2num(alignment)
+    shape = [shape_algn[0], shape_algn[1], no_aa]
+    algn_3d_bin = np.zeros(shape)
+    for index in range(0, no_aa):
+        algn_3d_bin[:, :, index] = (num_alignment == index)
+    return algn_3d_bin
 
 
-def lett2num(msa_lett):
+def lett2num(alignment):
     '''translates an alignment from a character representation of
-    amino acids ACDEFGHIKLMNPQRSTVWY to a numeric representation [1-20]'''
+    amino acids ACDEFGHIKLMNPQRSTVWY to a numeric representation [1-20]
+    0 is for representing gaps'''
     code = 'ACDEFGHIKLMNPQRSTVWY'
 
-    shape = msa_lett[1].shape
-    msa_num = np.zeros(shape)
+    shape = alignment[1].shape
+    num_alignment = np.zeros(shape)
 
     for i in range(0, shape[0]):
         for j in range(0, shape[1]):
-            lett = msa_lett[1][i][j]
+            lett = alignment[1][i][j]
             for index in range(0, len(code)):
                 if lett == code[index]:
-                    msa_num[i, j] = index
+                    num_alignment[i, j] = index
 
-    return msa_num
+    return num_alignment
