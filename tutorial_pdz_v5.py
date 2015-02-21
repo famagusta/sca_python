@@ -22,12 +22,13 @@ def tutorial():
     pdb = sca_read.read_pdb(PDB_FILE, CHAINID)
     alignments = sca_read.read_free(FREE_FILE)
     # n_alignments = len(alignments)
+    # len_alignment = len(alignments[0])
 
     # truncate alignments to sequence positions with
     # gap frequency no greater than 20% - to avoid over-representation of gaps
     alignments = helpers.truncate(alignments, FRAC_ALPHA_CUTOFF)
 
-    resseq_icode, resname = msa_search.msa_search(pdb, CHAINID, alignments)
-    return resseq_icode, resname
+    return msa_search.msa_search(pdb, CHAINID, alignments)
+
 
 OUTPUT = tutorial()
