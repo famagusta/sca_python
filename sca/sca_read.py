@@ -13,10 +13,14 @@ def read_free(filename):
     TODO: there might be a library function in Biopython
     """
     seqs = []
+    seq_lengths = []
     for line in open(filename):
         (_, seq_str) = line.strip().split()
-        seqs.append(list(seq_str)) # seq-str.ljust(SEQ_LENGTH)
-    return np.array(seqs, np.character)
+        seqs.append(list(seq_str))  # seq_str.ljust(SEQ_LENGTH)
+        seq_lengths.append(len(seq_str))
+    assert len(set(seq_lengths)) == 1, 'The sequences in the .free file are not of equal lengths'
+    return np.array(seqs)
+
 
 def read_pdb(filename, chainid):
     """
@@ -33,11 +37,14 @@ def read_pdb(filename, chainid):
     residue_list = chain.child_list
     return residue_list
 
+
 def read_fasta(filename):
     """
     Reading .fasta files
     Input: filename - name of the file
     Output: ndarray
     """
-    msa = AlignIO.read(filename, 'fasta', alphabet = Alphabet.Gapped(Alphabet.IUPAC.protein))
-    return np.array([list(rec) for rec in msa], np.character)
+    msa = AlignIO.read(filename, 'fasta', alphabet=Alphabet.Gapped(Alphabet.IUPAC.protein))
+    seq_lengths = [len(rec) for rec in msa]
+    assert len(set(seq_lengths)) == 1, 'The sequences in the .fasta file are not of equal lengths'
+    return np.array([list(rec) for rec in msa])

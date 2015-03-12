@@ -1,0 +1,17 @@
+msa_search:
+
+inputs:
+- residue_list in python version takes care of both pdb and chainID_trunc in Octave version
+
+1. AA list has 'END', 'GAP' to represent end of sequence and gaps in the sequences. Should they remain as they are now?
+Refer to: read_pdb function, Bio.PDB.PDBParser class methods i.e., How does residue_list represent gaps in its resnames
+2. smith_water_align returns the correct index of the sequence but wrong score.
+
+
+smith_water_align:
+'|' - match, ' ' - gap start, '.' - mismatch or gap-extension
+
+
+
+STATUS:
+MSAsearch.m till line 119 is checked.
