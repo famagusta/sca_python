@@ -4,26 +4,28 @@
 
 import numpy as np
 from helper import binrep, get_algn_shape
+from helper import compute_pos_corr_matrix, compute_seq_corr_matrix
 from project_aln import project_aln
 from weighted_aln import weight_aln
+from numpy import matrix as matrix
 
 
 class SCA:
     '''class structure that contains the output for the
         result of SCA calculations in the function before
     '''
-    def __init__(self,
+    def __init__(self, alignment,
                  algn_3d_bin, weighted_3d_algn,
                  pwX, pm,
-                 weight, para,
+                 weight,  # para,
                  Cp, Cs):
-
+        self.alignment = alignment
         self.algn_3d_bin = algn_3d_bin
-        self.weighted_3d_algn = wX
+        self.weighted_3d_algn = weighted_3d_algn
         self.pwX = pwX
         self.pm = pm
         self.weight = weight
-        self.para = para
+        #  self.para = para
         self.Cp = Cp
         self.Cs = Cs
 
@@ -34,6 +36,7 @@ def sca(alignment):
         uses default LB entropy function and its derivative
         for weighting.
         output is a class containing
+            alignment         : original input alignment
             algn_3d_bin       : binary alignment tensor (MxLx20)
             weighted_3d_algn  : MxLx20 weighted alignment tensor
             pwX               : the MxL projected weighted alignment matrix
@@ -66,21 +69,14 @@ def sca(alignment):
     # alignment tensor wX
     # call project_aln to do this
     proj_matrices = project_aln(alignment, weighted_3d_algn, weight)
-    proj_wt_algn = np.matrix(proj_matrices.proj_wt_algn)
-    proj_vect = np.matrix(proj_matrices.proj_vect)
+    prj_wt_aln = matrix(proj_matrices.prj_wt_aln)
+    proj_vect = matrix(proj_matrices.proj_vect)
 
     # Step 4 : Calculate SCA matrices
-    pos_mat_prod = np.dot(np.transpose(proj_wt_algn), proj_wt_algn)/no_seq
-    pos_avg_prod = np.dot(np.transpose(np.mean(proj_wt_algn, 0)),
-                          np.mean(proj_wt_algn, 0))
-    pos_corr = np.abs(pos_mat_prod - pos_avg_prod)
 
-    seq_mat_prod = np.dot(proj_wt_algn, np.transpose(proj_wt_algn))/no_pos
-    seq_avg_prod = \
-        np.dot(np.transpose(np.mean(np.transpose(proj_wt_algn), 0)),
-               np.mean(np.transpose(proj_wt_algn), 0))
-    seq_corr = np.abs(seq_mat_prod - seq_avg_prod)
+    pos_corr = compute_pos_corr_matrix(prj_wt_aln, no_seq)
 
-    print pos_corr
-    print seq_corr
-    return 0
+    seq_corr = compute_seq_corr_matrix(prj_wt_aln, no_pos)
+
+    return SCA(alignment, algn_3d_bin, weighted_3d_algn,
+               prj_wt_aln, proj_vect, weight, pos_corr, seq_corr)
