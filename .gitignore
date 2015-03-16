@@ -36,6 +36,7 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+*.swp
 =======
 log/*.log
 flask_application/static/gen/*
