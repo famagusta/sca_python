@@ -5,6 +5,15 @@ We have recreated the toolbox in python for further use in a Pymol plugin for vi
 * Beta - test version
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
+
+### What is SCA?
+* SCA is a computation technique to determine potential allosteric sites in protein families
+* based on evolutionary coupling between amino acid sequences in proteins. 
+
+* Note that there is a lower bound on number of sequences used in an MSA determined by binomial
+* distribution of frequencies of amino acids and KL entropy function. Around 100 is what the
+* notes on SCA calculations suggest. 
+
 ### How do I get set up? ###
 
 * Summary of set up
