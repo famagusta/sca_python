@@ -14,7 +14,10 @@ def read_free(filename):
     """
     seqs = []
     for line in open(filename):
-        (_, seq_str) = line.strip().split()
+        try:
+            (_, seq_str) = line.strip().split()
+        except ValueError:
+            seq_str = line.strip()
         seqs.append(list(seq_str))  # seq-str.ljust(SEQ_LENGTH)
     return np.array(seqs, np.character)
 
