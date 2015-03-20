@@ -9,6 +9,8 @@ def read_free(filename):
     """
     Reading .free files
     Input: filename - name of the file
+    the .free format is not standardized - it comes in 2 flavours 
+    added an exception for this
     Output: ndarray
     TODO: there might be a library function in Biopython
     """
