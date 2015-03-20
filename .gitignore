@@ -37,6 +37,7 @@
 ehthumbs.db
 Thumbs.db
 *.swp
+*.swo
 =======
 log/*.log
 flask_application/static/gen/*
