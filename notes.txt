@@ -10,7 +10,8 @@ Refer to: read_pdb function, Bio.PDB.PDBParser class methods i.e., How does resi
 
 smith_water_align:
 '|' - match, ' ' - gap start, '.' - mismatch or gap-extension
-
+Octave version:
+'|' - match, ' ' - gap start or gap ext., ':' - mismatch
 
 
 STATUS:
