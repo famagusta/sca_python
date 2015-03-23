@@ -104,6 +104,7 @@ def msa_search(residue_list, alignments, truncate_or_not=False):
     else:
         return max_score_index, ats_new, best_align
 
+
 def profile_align(prof1, prof2):
     """
     Profile-to-profile Needleman-Wunsch global alignment algorithm
