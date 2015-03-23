@@ -53,7 +53,7 @@ def spectral_decomp(sca_obj, no_samples, no_ev):
     no_aa = 20
 
     # TODO : add a condition for no of arguments less that 2
-    eig_obj = eig_vct(sca_obj.Cp, all_eig='all')
+    eig_obj = eig_vct(sca_obj.Cp)
     ev = eig_obj.eig_vct
     lbd = eig_obj.eig_val
 
@@ -90,29 +90,28 @@ def spectral_decomp(sca_obj, no_samples, no_ev):
     ev_rnd_tmp = zeros((no_pos, no_pos))
 
     for s in range(0, no_samples):
-        eig_pair_temp = eig_vct(C_tmp[:, :, s], all_eig='all')
+        eig_pair_temp = eig_vct(C_tmp[:, :, s])
         lbd_rnd[s, :] = eig_pair_temp.eig_val
         ev_rnd[s, :, :] = eig_pair_temp.eig_vct[:, 0:no_ev]
     return SpectralDecomp(C_rnd, lbd, ev, lbd_rnd, ev_rnd)
 
 
-def eig_vct(A, **options):
+def eig_vct(A, *arg):
     ''' computes the first k (all if k>rank(A)) eigvectors of a matrix A
     and their corresponding eigvalues'''
     # v stores eigvalues d stores eigvectors in columns v[:,i]
     # corresponds to w[i]
 
-    if options.get('all_eig') == 'all':
-        v, d = LA.eig(A)
-        return eig_pair(d, v)
-    else:
-        v, d = LA.eig(A)
-        l = sorted(v, reverse=True)
-        i = argsort(-v)
-        w = v[:, i[1:k]]
+    if len(arg) < 1:
+        k = A.shape[0]
 
-        r = l[1:k]
+    v, d = LA.eig(A)
+    l = sorted(v, reverse=True)
+    i = argsort(-v)
+    w = d[:, i[0:k]]
 
-        for n in range(0, k):
-            w[:, n] = sign(mean(w[:, n]))*w[:, n]
-        return eig_pair(r, w)
+    r = l[0:k]
+
+    for n in range(0, k):
+        w[:, n] = sign(mean(w[:, n]))*w[:, n]
+    return eig_pair(w, r)

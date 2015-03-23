@@ -4,13 +4,13 @@ from helper import *
 from weighted_aln import *
 from project_aln import *
 from numpy import linalg as LA
-from scipy.stats import lognorm
-from scipy.stats import t
+from scipy.stats import lognorm, t
 from spectral_decomp import *
 import numpy as np
-from numpy import arange
-from numpy import log
-from sklearn.decomposition import FastICA
+from numpy import arange, log, square, zeros, percentile, ptp,\
+    histogram, argmax, argmin, array, where
+from numpy import sum as mat_sum
+from ica import *
 
 
 base_input_dir = '/Users/robinphilip/Documents/TAPAS/tapas_app/Inputs/'
@@ -49,6 +49,15 @@ U = svd_output[0]
 sv = svd_output[1]
 V = svd_output[2]
 
+
+# perform independent components calculations
+kmax = 8
+learnrate = 0.0001
+iterations = 20000
+w = ica(transpose(spect.pos_ev[:, 0:kmax]), learnrate, iterations)
+ic_P = transpose(dot(w, transpose(spect.pos_ev[:, 0:kmax])))
+
+print "ic_P hash :" + str(mat_sum(square(ic_P)))
 # calculate the matrix Pi = U*V'
 # this provides a mathematical mapping between
 # positional and sequence correlation
@@ -57,11 +66,32 @@ n_min = min(no_seq, no_pos)
 Pi = dot(U[:, 0:n_min-1], transpose(V[:, 0:n_min-1]))
 U_p = dot(Pi, spect.pos_ev)
 
-pd = t.fit(spect.pos_ev[:, 0], floc=0)
-# floc = 0 holds location to 0 for fitting
-print pd
 
-ica = FastICA(max_iter=1000000, algorithm='parallel', tol=0.0001)
+p_cutoff = 0.9
+nfit = 3
+cutoffs = zeros((nfit, 1))
+sector_def = []
+
+for i in range(0, nfit):
+    nu, mu, sigma = t.fit(ic_P[:, i])
+    q75, q25 = percentile(ic_P[:, i], [75, 25])
+    iqr = q75 - q25
+    binwidth = 2*iqr*pow(size(ic_P[:, i]), -1/3.0)  # Freedman-Diaconis rule
+    nbins = round(ptp(ic_P[:, i])/binwidth)
+    yhist, xhist = histogram(ic_P[:, i], nbins)
+    x_dist = arange(min(xhist), max(xhist), (max(xhist) - min(xhist))/100)
+    cdf_jnk = t.cdf(x_dist, nu, mu, sigma)
+    pdf_jnk = t.pdf(x_dist, nu, mu, sigma)
+    maxpos = argmax(pdf_jnk)
+    tail = zeros((1, size(pdf_jnk)))
+    if abs(max(ic_P[:, i])) > abs(min(ic_P[:, i])):
+        tail[:, maxpos:] = cdf_jnk[maxpos:]
+    else:
+        tail[0:maxpos] = cdf_jnk[0:maxpos]
+    x_dist_pos = argmin(abs(tail - p_cutoff))
+    cutoffs[i] = x_dist[x_dist_pos]
+    sector_def.append(array(where(ic_P[:, i] > cutoffs[i])[0])[0])
+print sector_def
 
 
 def test_z(filename, uncorr_algo, distbn_to_fit):
