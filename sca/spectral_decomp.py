@@ -36,7 +36,7 @@ class eig_pair:
         self.eig_val = eig_val
 
 
-def spectral_decomp(sca_obj, no_samples, no_ev):
+def spectral_decomp(sca_obj, *args):
     '''This function computes the spectral (eigenvalue) decomposition of the
         correlation matrices in SCA. It carries out the N samples trial of such
         decomposition for randomized alignments.
@@ -53,6 +53,11 @@ def spectral_decomp(sca_obj, no_samples, no_ev):
     no_aa = 20
 
     # TODO : add a condition for no of arguments less that 2
+    if len(args) < 2:
+        no_samples = 100
+        no_ev = no_pos
+    if len(args) < 3:
+        no_ev = no_pos
     eig_obj = eig_vct(sca_obj.Cp)
     ev = eig_obj.eig_vct
     lbd = eig_obj.eig_val

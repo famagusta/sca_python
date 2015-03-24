@@ -7,7 +7,10 @@ linalg.svd(A)
 for sparse matrices, there are methods in SciPy
 """
 
-from sca import sca_read, msa_search, tutorial_helpers as helpers
+from sca import *
+from sca.tutorial_helpers import truncate
+from sca.sca_read import *
+from sca.msa_search import *
 
 PDB_FILE = './Inputs/1BE9.pdb'
 FREE_FILE = './Inputs/al_pdz.free'
@@ -19,16 +22,16 @@ def tutorial():
     """
     Analysis of an alignment of the PDZ domain family
     """
-    pdb_res_list = sca_read.read_pdb(PDB_FILE, CHAINID)
-    alignments = sca_read.read_free(FREE_FILE)
+    pdb_res_list = read_pdb(PDB_FILE, CHAINID)
+    alignments = read_free(FREE_FILE)
     # n_alignments = len(alignments)
     # len_alignment = len(alignments[0])
 
     # truncate alignments to sequence positions with
     # gap frequency no greater than 20% - to avoid over-representation of gaps
-    alignments = helpers.truncate(alignments, FRAC_ALPHA_CUTOFF)
+    alignments = truncate(alignments, FRAC_ALPHA_CUTOFF)
 
-    return msa_search.msa_search(pdb_res_list, alignments)
+    return msa_search(pdb_res_list, alignments)
 
 
 OUTPUT = tutorial()
