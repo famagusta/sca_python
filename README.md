@@ -44,4 +44,4 @@ pip install -r <location of requirements.txt file>
 
 ### Who do I talk to? ###
 
-* Contact - deekshith@jeevomics.com or robin@jeevomics.com
+* Contact - robinphilip1989@gmail.com
