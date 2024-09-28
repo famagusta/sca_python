@@ -44,4 +44,5 @@ pip install -r <location of requirements.txt file>
 
 ### Who do I talk to? ###
 
-* Contact - robinphilip1989@gmail.com
+* Contact - robin{.}philip{.}1989@gmail.com
+* Remove the {.} before sending
